@@ -1,24 +1,35 @@
-import logo from './logo.svg';
 import './App.css';
+import TabBox from './components/TabBox';
+import { useState, createContext, Suspense } from 'react';
+import listTeams from './data/teams';
+import listMatches from './data/matches';
+
+export const Context = createContext();
+
+function SuspensedApp() {
+  const [teams, setTeams] = useState(listTeams);
+	const [matches, setMatches] = useState(listMatches);
+	const [teamsFinalScore, setTeamsFinalScore] = useState(listTeams);
+	const [finalScoreboardEnabled, setFinalScoreboardEnabled] = useState(false);
+
+  function enableScoreboard () {
+		setFinalScoreboardEnabled(true);
+	}
+
+  return (
+    <Context.Provider value={[ teams, setTeams, matches, setMatches, teamsFinalScore, setTeamsFinalScore]}>
+      <div className="App">
+        <TabBox enableScoreboard={enableScoreboard} />
+      </div>
+    </Context.Provider>
+  );
+}
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Suspense fallback="Loading dependencies. If the page doesn't load, turn off Google auto translation or another translation service you use and reload the page to access.">
+      <SuspensedApp />
+    </Suspense>
   );
 }
 
